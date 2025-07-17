@@ -1,0 +1,23 @@
+import cv2
+import numpy as np
+
+# Step 1: Read the image
+image = cv2.imread('image.jpg')
+
+# Step 2: Define 4 corresponding points (source and destination)
+# These are sample points; you can update them as needed
+src_pts = np.float32([[100, 100], [200, 100], [100, 200], [200, 200]])
+dst_pts = np.float32([[80, 150], [210, 130], [90, 250], [220, 270]])
+
+# Step 3: Compute the Homography matrix
+H, status = cv2.findHomography(src_pts, dst_pts)
+
+# Step 4: Apply the Homography transformation
+height, width = image.shape[:2]
+warped_image = cv2.warpPerspective(image, H, (width, height))
+
+# Step 5: Show the results
+cv2.imshow("Original Image", image)
+cv2.imshow("Homography Transformed Image", warped_image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
