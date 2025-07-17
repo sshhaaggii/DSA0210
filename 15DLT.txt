@@ -1,0 +1,44 @@
+import cv2
+import numpy as np
+
+# Step 1: Read the image
+image = cv2.imread('image.jpg')
+
+# Step 2: Define corresponding points (at least 4)
+src_pts = np.array([
+    [100, 100],
+    [200, 100],
+    [100, 200],
+    [200, 200]
+], dtype=np.float32)
+
+dst_pts = np.array([
+    [80, 150],
+    [210, 130],
+    [90, 250],
+    [220, 270]
+], dtype=np.float32)
+
+# Step 3: Construct matrix A for DLT
+A = []
+for i in range(len(src_pts)):
+    x, y = src_pts[i][0], src_pts[i][1]
+    x_prime, y_prime = dst_pts[i][0], dst_pts[i][1]
+    A.append([-x, -y, -1, 0, 0, 0, x * x_prime, y * x_prime, x_prime])
+    A.append([0, 0, 0, -x, -y, -1, x * y_prime, y * y_prime, y_prime])
+
+A = np.array(A)
+
+# Step 4: Solve Ah = 0 using SVD
+U, S, Vt = np.linalg.svd(A)
+H = Vt[-1].reshape(3, 3)  # Homography matrix from DLT
+
+# Step 5: Apply perspective warp using H
+height, width = image.shape[:2]
+warped_image = cv2.warpPerspective(image, H, (width, height))
+
+# Step 6: Display results
+cv2.imshow("Original Image", image)
+cv2.imshow("DLT Transformed Image", warped_image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
