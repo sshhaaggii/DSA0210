@@ -1,0 +1,23 @@
+import cv2
+import numpy as np
+
+# Step 1: Read the image
+image = cv2.imread('image.jpg')
+
+# Step 2: Define four points on the original image
+pts1 = np.float32([[50, 50], [300, 50], [50, 300], [300, 300]])
+
+# Step 3: Define the points where you want to map them in output
+pts2 = np.float32([[0, 0], [300, 0], [0, 300], [300, 300]])
+
+# Step 4: Get the Perspective Transform Matrix
+matrix = cv2.getPerspectiveTransform(pts1, pts2)
+
+# Step 5: Apply the Perspective Transformation
+output = cv2.warpPerspective(image, matrix, (300, 300))
+
+# Step 6: Display the result
+cv2.imshow("Original Image", image)
+cv2.imshow("Perspective Transform", output)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
