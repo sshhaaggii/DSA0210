@@ -1,0 +1,30 @@
+import cv2
+import numpy as np
+
+# Step 1: Open the video
+cap = cv2.VideoCapture("video.mp4")  # Replace with your actual video file
+
+# Step 2: Define four source points (manually selected - adjust as per your video)
+pts1 = np.float32([[50, 50], [300, 50], [50, 300], [300, 300]])
+pts2 = np.float32([[0, 0], [400, 0], [0, 400], [400, 400]])
+
+# Step 3: Get the Perspective Transform Matrix
+matrix = cv2.getPerspectiveTransform(pts1, pts2)
+
+while cap.isOpened():
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    # Step 4: Apply perspective transformation on each frame
+    output = cv2.warpPerspective(frame, matrix, (400, 400))
+
+    # Step 5: Display the result
+    cv2.imshow("Original Video", frame)
+    cv2.imshow("Perspective Transformed Video", output)
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
